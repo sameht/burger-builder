@@ -9,16 +9,29 @@ interface Props {
 export class Burger extends Component<Props>{
 
     render() {
-        let transformedIngrediens = this.props.ingredients.map(ingredient => {
-            return [...Array(ingredient.quantity)].map(d => {
-                return <BurgerIngredient type={ingredient.name} />
+        let transformedIngrediens = null
+        let transformed = this.props.ingredients
+            .map(ingredient => {
+                return [...Array(ingredient.quantity)].map((d, index )=> {
+                    return <BurgerIngredient key= {index} type={ingredient.name} />
+                })
             })
-        })
+            .reduce((arr, elt) => {
+                return arr.concat(elt)
+            }, []);
+        if (transformed.length === 0)
+            transformedIngrediens = <p>Start inserting ingredients</p>
+        else
+            transformedIngrediens = transformed
+
+
         return (
-            <div className="burger">
-                <BurgerIngredient type={"BreadTop"} />
-                {transformedIngrediens}
-                <BurgerIngredient type={"BreadBottom"} />
+            <div>
+                <div className="burger">
+                    <BurgerIngredient type={"BreadTop"} />
+                    {transformedIngrediens}
+                    <BurgerIngredient type={"BreadBottom"} />
+                </div>
             </div>
         );
     }
