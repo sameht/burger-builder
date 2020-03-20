@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import './BuildControl.css';
+import { IngredientType } from "../../../../container/BurgerBuilder/BurgerBuilder";
 
 interface Props {
-    label :string
+    label : keyof IngredientType
     removed: () => void
     added: () => void
 }

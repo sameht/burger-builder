@@ -13,7 +13,7 @@ export class Burger extends Component<Props>{
         let transformed = this.props.ingredients
             .map(ingredient => {
                 return [...Array(ingredient.quantity)].map((d, index )=> {
-                    return <BurgerIngredient key= {index} type={ingredient.name} />
+                    return <BurgerIngredient key= {index+Math.random()} type={ingredient.name} />
                 })
             })
             .reduce((arr, elt) => {
