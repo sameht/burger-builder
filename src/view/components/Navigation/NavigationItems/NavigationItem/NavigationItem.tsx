@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import './NavigationItem.css';
 
 interface Props {
-    active:boolean | null
+    active:boolean
     link: string
 }
 

@@ -36,7 +36,7 @@ export class BuildControls extends Component<Props>{
                 <button
                     disabled={!this.props.purchasable}
                     className="OrderButton"
-                    onClick={this.props.ordred}>
+                    onClick={()=>this.props.ordred()}>
                     ORDER NOW
                 </button>
             </div>

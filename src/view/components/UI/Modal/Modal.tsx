@@ -6,12 +6,17 @@ interface Props {
     show: boolean
     modalClosed: ()=> void
 }
-export class Modal extends Component<Props>{
+interface State{}
+export class Modal extends Component<Props,State>{
 
+    shouldComponentUpdate(nextProps: Props){
+        return nextProps.show !== this.props.show
+    }
+    
     render() {
         return (
             <div>
-                <Backdrop show={this.props.show} clicked={this.props.modalClosed}></Backdrop>
+                <Backdrop show={this.props.show} clicked={()=>this.props.modalClosed()}></Backdrop>
                 <div className="Modal"
                     style={{
                         transform: this.props.show ? 'translateY(0)' : 'translateX(-100vh)',

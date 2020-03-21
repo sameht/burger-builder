@@ -11,7 +11,9 @@ interface Props {
 }
 
 export class OrderSummary extends Component<Props>{
-
+    componentDidUpdate(){
+        console.log("order summary: update")
+    }
     render() {
         return (
             <div className="OrderSummary">
@@ -29,8 +31,8 @@ export class OrderSummary extends Component<Props>{
                 </ul>
                 <p><strong>Totale Price: {this.props.totalePrice}</strong></p>
                 <p>Continue to checkout?</p>
-                <Button clicked={this.props.purchaseCancelled} btnType="Danger">CANCEL</Button>
-                <Button clicked={this.props.purchaseContinued} btnType="Success">CONTINUE</Button>
+                <Button clicked={()=>this.props.purchaseCancelled()} btnType="Danger">CANCEL</Button>
+                <Button clicked={()=>this.props.purchaseContinued()} btnType="Success">CONTINUE</Button>
             </div>
         );
     }

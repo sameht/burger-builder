@@ -14,7 +14,7 @@ export class Button extends Component<Props>{
 
         return (
             <button className={["Button", this.props.btnType].join(' ')}
-                onClick={this.props.clicked}>
+                onClick={()=>this.props.clicked()}>
                 {this.props.children}
             </button>
 

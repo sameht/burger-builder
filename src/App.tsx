@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Layout } from './view/components/Layout/Layout';
+import { Layout } from './view/container/Layout/Layout';
 import { BurgerBuilder } from './view/container/BurgerBuilder/BurgerBuilder';
 
 function App() {
