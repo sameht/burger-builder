@@ -11,8 +11,8 @@ export class Toolbar extends Component<Props>{
         return (
             <header className={"Toolbar"}>
                 <div>MENU</div>
-                <Logo/>
-                <nav>
+                <div style={{height: "80%"}}><Logo/></div>
+                <nav className="DesktopOnly">
                     <NavigationItems></NavigationItems>
                 </nav>
             </header>
