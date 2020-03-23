@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import './Layout.css';
 import { Toolbar } from "../../components/Navigation/Toolbar/Toolbar";
 import { SideDrawer } from "../../components/Navigation/SideDrawer/SideDrawer";
+
 interface Props {
 
 }
@@ -18,6 +19,7 @@ export class Layout extends Component<Props, State>{
             showSideDrawer: false
         }
     }
+
 
     render() {
         return (

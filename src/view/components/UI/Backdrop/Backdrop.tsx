@@ -5,10 +5,6 @@ interface Props{
     clicked : ()=>void
 }
 export class Backdrop extends Component<Props>{
-    constructor(props: Props){
-        super(props)
-    }
-
     render(){
         const Backdrop =this.props.show ? <div className="Backdrop" onClick={()=>this.props.clicked()}></div> : null
         return(

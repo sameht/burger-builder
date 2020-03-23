@@ -5,10 +5,6 @@ interface Props {
     clicked: () => void
 }
 export class Button extends Component<Props>{
-    constructor(props: Props) {
-        super(props)
-
-    }
 
     render() {
 
