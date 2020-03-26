@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import './NavigationItem.css';
+import { NavLink } from "react-router-dom";
 
 interface Props {
-    active:boolean
     link: string
+    exact: boolean
 }
 
 export class NavigationItem extends Component<Props>{
@@ -12,9 +13,12 @@ export class NavigationItem extends Component<Props>{
         return (
 
             <li className="NavigationItem">
-                <a href={this.props.link} 
-                className={this.props.active ? "active":""}>
-                {this.props.children}</a>
+                <NavLink
+                    exact={this.props.exact}
+                    to={this.props.link}
+                    activeClassName='active'>
+                    {this.props.children}
+                </NavLink>
             </li>
         );
     }

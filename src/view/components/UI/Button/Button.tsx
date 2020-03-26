@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import './Button.css'
 interface Props {
     btnType: string
-    clicked: () => void
+    clicked: (clickEvent:any) => void
 }
 export class Button extends Component<Props>{
 
@@ -10,7 +10,7 @@ export class Button extends Component<Props>{
 
         return (
             <button className={["Button", this.props.btnType].join(' ')}
-                onClick={()=>this.props.clicked()}>
+                onClick={(event)=>this.props.clicked(event)}>
                 {this.props.children}
             </button>
 

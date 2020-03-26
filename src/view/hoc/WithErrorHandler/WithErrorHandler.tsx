@@ -14,7 +14,7 @@ interface State {
 
 const withErrorHandler = <P extends object>(WrappedComponent: ComponentType<P>) =>
 
-    class WithErrorHandler extends React.Component<P & WithErrorHandlerProps, State> {
+    class WithErrorHandler extends Component<P & WithErrorHandlerProps, State> {
         private reqInterceptors :  number
         private resInterceptors :  number
         constructor(props: P & WithErrorHandlerProps) {

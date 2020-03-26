@@ -7,7 +7,7 @@ import { OrderSummary } from "../../components/Burger/OrderSummary/OrderSummary"
 import AxiosOrder from '../../../service/AxiosOrder'
 import { Spinner } from "../../components/UI/Spinner/Spinner";
 import withErrorHandler from "../../hoc/WithErrorHandler/WithErrorHandler";
-
+import { RouteComponentProps } from 'react-router-dom'
 
 export interface IngredientType {
     Salad: number
@@ -30,12 +30,12 @@ interface State {
     loading: boolean
     error: string | null
 }
-interface Props {
+interface Props extends RouteComponentProps {
 
 }
-class BurgerBuilder extends Component<Props, State>{
+class BurgerBuilder extends Component<any , State>{
 
-    constructor(props: Props) {
+    constructor(props: any) {
         super(props);
         this.state = {
             ingredients: [],
@@ -48,6 +48,7 @@ class BurgerBuilder extends Component<Props, State>{
     }
 
     componentDidMount() {
+        console.log(this.props.history)
         this.setState({ loading: true })
         AxiosOrder.get('https://react-my-burger-df2a5.firebaseio.com/ingredients.json')
             .then(response => {
@@ -101,29 +102,16 @@ class BurgerBuilder extends Component<Props, State>{
     }
 
     purchaseContinueHandler = () => {
-        this.setState({ loading: true })
-        const order = {
-            ingredients: this.state.ingredients,
-            price: this.state.totalPrice,
-            customer: {
-                name: "sameh",
-                adress: {
-                    street: 'teboulba',
-                    zipCode: '5080'
-                },
-                email: 'myemail@gmail.com',
-                deliveryMethod: 'fastest'
-            }
+        const queryParams=[];
+        for (let i in this.state.ingredients) {
+            queryParams.push(encodeURIComponent(this.state.ingredients[i].name)+ '='+ encodeURIComponent(this.state.ingredients[i].quantity))
         }
-        AxiosOrder.post('orders/json', order)
-            .then(response => {
-                console.log(response)
-                this.setState({ loading: false, purchase: false })
-            })
-            .catch(error => {
-                this.setState({ loading: false, purchase: false })
-                console.log(error)
-            })
+        queryParams.push("price=" + this.state.totalPrice)
+        const queryString=queryParams.join('&')
+        this.props.history.push({
+            pathname: '/checkout',
+            search: '?' + queryString
+        })
     }
 
     purchaseCancelHandler = () => {

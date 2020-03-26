@@ -10,8 +10,8 @@ export class NavigationItems extends Component<Props>{
     render(){
         return(
             <ul className="NaviationItems">
-                <NavigationItem link="/" active>Burger Builder</NavigationItem>
-                <NavigationItem link="/" active={false}>Checkout</NavigationItem>
+                <NavigationItem link="/" exact>Burger Builder</NavigationItem>
+                <NavigationItem link="/orders" exact={false}>Orders</NavigationItem>
             </ul>
         );
     }
