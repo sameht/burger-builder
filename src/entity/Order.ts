@@ -3,15 +3,6 @@ import { Customer } from "./Customer";
 
 export class Order{
     
-    private _id : string;
-    public get id() : string {
-        return this._id;
-    }
-    public set id(v : string) {
-        this._id = v;
-    }
-    
-    
     private _ingredients : Ingredient[];
     public get ingredients() : Ingredient[] {
         return this._ingredients;
@@ -38,8 +29,7 @@ export class Order{
         this._customer = v;
     }
     
-    constructor(id: string, customer: Customer, ingredients: Ingredient[], price: number){
-        this._id=id
+    constructor(customer: Customer, ingredients: Ingredient[], price: number){
         this._ingredients=ingredients;
         this._customer=customer;
         this._price=price

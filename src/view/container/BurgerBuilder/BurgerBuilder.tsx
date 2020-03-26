@@ -8,6 +8,7 @@ import AxiosOrder from '../../../service/AxiosOrder'
 import { Spinner } from "../../components/UI/Spinner/Spinner";
 import withErrorHandler from "../../hoc/WithErrorHandler/WithErrorHandler";
 import { RouteComponentProps } from 'react-router-dom'
+import { IngredientService } from "../../../service/IngredientService";
 
 export interface IngredientType {
     Salad: number
@@ -30,13 +31,11 @@ interface State {
     loading: boolean
     error: string | null
 }
-interface Props extends RouteComponentProps {
 
-}
-class BurgerBuilder extends Component<any , State>{
+class BurgerBuilder extends Component<RouteComponentProps, State>{
 
-    constructor(props: any) {
-        super(props);
+    constructor(props:RouteComponentProps){
+        super(props)
         this.state = {
             ingredients: [],
             totalPrice: 4,
@@ -47,20 +46,17 @@ class BurgerBuilder extends Component<any , State>{
         }
     }
 
+
+
     componentDidMount() {
-        console.log(this.props.history)
         this.setState({ loading: true })
-        AxiosOrder.get('https://react-my-burger-df2a5.firebaseio.com/ingredients.json')
-            .then(response => {
-                let ingredients = Object.keys(response.data).map(ingredient => {
-                    return (new Ingredient(ingredient, response.data[ingredient]))
-                })
-                this.setState({ ingredients: ingredients })
-                this.setState({ loading: false })
+        IngredientService.getIngredients()
+            .then(res => {
+                console.log(res)
+                this.setState({ ingredients: res, loading: false })
             })
             .catch(error => {
-                this.setState({ error: error })
-                console.log(error)
+                this.setState({ error: error, loading: false })
             })
     }
 
@@ -102,12 +98,12 @@ class BurgerBuilder extends Component<any , State>{
     }
 
     purchaseContinueHandler = () => {
-        const queryParams=[];
+        const queryParams = [];
         for (let i in this.state.ingredients) {
-            queryParams.push(encodeURIComponent(this.state.ingredients[i].name)+ '='+ encodeURIComponent(this.state.ingredients[i].quantity))
+            queryParams.push(encodeURIComponent(this.state.ingredients[i].name) + '=' + encodeURIComponent(this.state.ingredients[i].quantity))
         }
         queryParams.push("price=" + this.state.totalPrice)
-        const queryString=queryParams.join('&')
+        const queryString = queryParams.join('&')
         this.props.history.push({
             pathname: '/checkout',
             search: '?' + queryString

@@ -11,17 +11,17 @@ export class OrderService{
 
                 for (const id in rs.data){
                     let customer = new Customer(
-                        rs&&rs.data[id]&&rs.data[id].customer&&rs.data[id].customer.name, 
-                        rs.data[id].customer?.email,
-                        rs.data[id].customer?.deliveryMethod,
-                        {street: rs.data[id].customer?.adress.street, zipCode: rs.data[id].customer?.adress.zipCode})
+                        rs.data[id]._customer._name, 
+                        rs.data[id]._customer?._email,
+                        rs.data[id]._customer?._deliveryMethod,
+                        {street: rs.data[id]._customer?._address.street, zipCode: rs.data[id]._customer?._address.zipCode})
                         
                         let ingredients = []
-                        for (let j=0; j<rs.data[id].ingredients?.length; j++){
-                            let ingred=new Ingredient(rs.data[id].ingredients[j]._name, parseInt(rs.data[id].ingredients[j]._quantity))
+                        for (let j=0; j<rs.data[id]._ingredients?.length; j++){
+                            let ingred=new Ingredient(rs.data[id]._ingredients[j]._name, parseInt(rs.data[id]._ingredients[j]._quantity))
                             ingredients.push(ingred)
                         }
-                        let ord= new Order(id,customer, ingredients, rs.data[id].price)
+                        let ord= new Order(customer, ingredients, rs.data[id]._price)
                         orders.push(ord)
                 }
                 resolve(orders)

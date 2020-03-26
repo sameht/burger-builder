@@ -19,7 +19,7 @@ class Orders extends Component<any, State>{
     componentDidMount() {
         OrderService.getOrders()
             .then(res => {
-                console.log(res[0].id)
+
                 this.setState({ loading: false, orders: res })
             })
             .catch(error => {
@@ -29,17 +29,11 @@ class Orders extends Component<any, State>{
 
     render() {
         let orders=null
-        orders = this.state.orders.map((ord:Order) => (
-                
-            <OrderComponent key={ord.id} price={ord.price} ingredients={ord.ingredients}></OrderComponent>
-                
+        orders = this.state.orders.map((ord:Order, index) => (
+            <OrderComponent key={index} price={ord.price} ingredients={ord.ingredients}></OrderComponent>     
         ))
-
         if(this.state.loading)
             orders=<Spinner></Spinner>
-        
-
-
         return (
             <div>
                 {orders}

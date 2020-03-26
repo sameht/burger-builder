@@ -12,7 +12,7 @@ export class OrderComponent extends Component<Props>{
             <div className='OrderComponent'>
                 <p>Ingredients:
                     {this.props.ingredients.map(ingred => (
-                    <span>
+                    <span key={ingred.name}>
                         {ingred.name} 
                         ({ingred.quantity})
                     </span>
