@@ -1,18 +1,27 @@
-import React, { Component } from "react";
+import React, { Component, Dispatch } from "react";
 import './ContactData.css'
 import { Button } from "../../../components/UI/Button/Button";
 import { Ingredient } from "../../../../entity/Ingredient";
-import AxiosOrder from '../../../../service/AxiosOrder'
 import { Spinner } from "../../../components/UI/Spinner/Spinner";
 import { RouteComponentProps } from "react-router-dom";
-import { OrderService } from "../../../../service/OrderService";
 import { Order } from "../../../../entity/Order";
 import { Customer } from "../../../../entity/Customer";
+import { connect } from "react-redux";
+import withErrorHandler from "../../../hoc/WithErrorHandler/WithErrorHandler";
+import  * as orderAction from '../../../../store/actions/index'
+import { AppState } from "../../../..";
 
-interface Props extends RouteComponentProps {
+interface DispatchProps {
+    onOrderBurger: (order: Order) => void
+}
+
+interface StateProps {
     ingredients: Ingredient[]
     totalPrice: number
+    loading: boolean
 }
+
+interface Props extends DispatchProps, RouteComponentProps, StateProps {}
 
 interface State {
     name: string
@@ -20,18 +29,17 @@ interface State {
     address: {
         street: string,
         postalCode: string
-    },
-    loading: boolean
+    }
 }
-export class ContactData extends Component<Props, State>{
+
+class ContactData extends Component<Props, State>{
     state = {
         name: '',
         email: '',
         address: {
             street: '',
             postalCode: ''
-        },
-        loading: false
+        }
     }
     render() {
         let form = (
@@ -45,7 +53,7 @@ export class ContactData extends Component<Props, State>{
                     btnType='Success'>Order</Button>
             </form>
         )
-        if (this.state.loading) {
+        if (this.props.loading) {
             form = <Spinner />
         }
         return (
@@ -59,22 +67,31 @@ export class ContactData extends Component<Props, State>{
 
     orderHandler(event: any) {
         event.preventDefault()
-        this.setState({ loading: true })
-        const order = new Order (
-            new Customer("sameh", "sameh@email.com", "fastest", {street: "teboulba", zipCode: "8050"}),
+
+        const order = new Order(
+            new Customer("sameh", "sameh@email.com", "fastest", { street: "teboulba", zipCode: "8050" }),
             this.props.ingredients,
-            this.props.totalPrice,
-        )
+            this.props.totalPrice)
+
         console.log(order)
-        OrderService.postOrder(order)
-            .then(response => {
-                console.log(response)
-                this.setState({ loading: false })
-                this.props.history.push('/')
-        })
-            .catch(error => {
-                this.setState({ loading: false })
-                console.log(error)
-            })
+        this.props.onOrderBurger(order)
+
     }
 }
+
+const mapStateToProps = (state: AppState) => {
+    return {
+        ingredients: state.burger.ingredients,
+        totalPrice: state.burger.totalPrice,
+        loading: state.order.loading
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<any>) => {
+    return {
+        onOrderBurger : (order: Order) => dispatch(orderAction.purchaseBurger(order))
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(ContactData))

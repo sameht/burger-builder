@@ -1,91 +1,65 @@
-import React, { Component } from "react";
+import React, { Component, Dispatch } from "react";
 import { Burger } from "../../components/Burger/Burger";
 import { BuildControls } from "../../components/Burger/BuildControls/BuildControls"
 import { Ingredient } from "../../../entity/Ingredient";
 import { Modal } from "../../components/UI/Modal/Modal";
 import { OrderSummary } from "../../components/Burger/OrderSummary/OrderSummary";
-import AxiosOrder from '../../../service/AxiosOrder'
-import { Spinner } from "../../components/UI/Spinner/Spinner";
 import withErrorHandler from "../../hoc/WithErrorHandler/WithErrorHandler";
 import { RouteComponentProps } from 'react-router-dom'
-import { IngredientService } from "../../../service/IngredientService";
+import { connect } from 'react-redux'
+import * as actions from '../../../store/actions/index'
+import { AppState } from "../../..";
 
-export interface IngredientType {
-    Salad: number
-    Meat: number
-    Bacon: number
-    Cheese: number
+interface StateProps { 
+    ingreds: Ingredient[]
+    totPrice: number
+    error: boolean
 }
-const INGREDIENT_PRICES: IngredientType = {
-    Salad: 0.5,
-    Meat: 0.7,
-    Bacon: 2,
-    Cheese: 1.7
+
+interface DispatchProps {
+    onIngredientAdded: (name: string) => void
+    onIngredientRemoved: (name: string) => void
+    onInitIngredients: () => void
+    onInitPurchase: () => void
+}
+
+interface Props extends RouteComponentProps, StateProps, DispatchProps {
 }
 
 interface State {
-    ingredients: Ingredient[]
-    totalPrice: number
-    purchasable: boolean
     purchase: boolean
-    loading: boolean
-    error: string | null
 }
 
-class BurgerBuilder extends Component<RouteComponentProps, State>{
-
-    constructor(props:RouteComponentProps){
-        super(props)
-        this.state = {
-            ingredients: [],
-            totalPrice: 4,
-            purchasable: false,
-            purchase: false,
-            loading: false,
-            error: null
-        }
+class BurgerBuilder extends Component<Props, State>{
+    state = {
+        purchase: false
     }
-
-
 
     componentDidMount() {
-        this.setState({ loading: true })
-        IngredientService.getIngredients()
-            .then(res => {
-                console.log(res)
-                this.setState({ ingredients: res, loading: false })
-            })
-            .catch(error => {
-                this.setState({ error: error, loading: false })
-            })
+        console.log(this.props.ingreds)
+        this.props.onInitIngredients()
     }
-
 
     render() {
         let orderSummary = null
-        let burger = this.state.error ? <p>Ingredient can't be loaded</p> : <Spinner />
-        if (this.state.ingredients.length > 0) {
+        let burger = this.props.error ? <p>Ingredient can't be loaded</p> : null
+        if (this.props.ingreds.length > 0) {
             burger = <div>
-                <Burger ingredients={this.state.ingredients} />
+                <Burger ingredients={this.props.ingreds} />
                 <BuildControls
-                    purchasable={this.state.purchasable}
-                    totalePrice={this.state.totalPrice}
-                    ingredientRemoved={(e) => this.removeIngredientHandler(e)}
-                    ingredientAdded={(e) => this.addIngredientHandler(e)}
+                    purchasable={this.updatePurchaseState()}
+                    totalePrice={this.props.totPrice}
+                    ingredientRemoved={(e) => this.props.onIngredientRemoved(e)}
+                    ingredientAdded={(e) => this.props.onIngredientAdded(e)}
                     ordred={() => this.purchaseHandler()} />
             </div>
 
             orderSummary = <OrderSummary
                 purchaseContinued={this.purchaseContinueHandler}
                 purchaseCancelled={this.purchaseCancelHandler}
-                ingredientSummary={this.state.ingredients}
-                totalePrice={Number(this.state.totalPrice.toFixed(2))} />
+                ingredientSummary={this.props.ingreds}
+                totalePrice={Number(this.props.totPrice.toFixed(2))} />
         }
-
-        if (this.state.loading) {
-            orderSummary = <Spinner />
-        }
-
 
         return (
             <div>
@@ -98,16 +72,8 @@ class BurgerBuilder extends Component<RouteComponentProps, State>{
     }
 
     purchaseContinueHandler = () => {
-        const queryParams = [];
-        for (let i in this.state.ingredients) {
-            queryParams.push(encodeURIComponent(this.state.ingredients[i].name) + '=' + encodeURIComponent(this.state.ingredients[i].quantity))
-        }
-        queryParams.push("price=" + this.state.totalPrice)
-        const queryString = queryParams.join('&')
-        this.props.history.push({
-            pathname: '/checkout',
-            search: '?' + queryString
-        })
+        this.props.onInitPurchase()
+        this.props.history.push('/checkout')
     }
 
     purchaseCancelHandler = () => {
@@ -117,32 +83,30 @@ class BurgerBuilder extends Component<RouteComponentProps, State>{
     purchaseHandler() {
         this.setState({ purchase: true })
     }
-    updatePurchaseState(ingredients: Ingredient[]) {
-        let sum = ingredients.reduce((sum, current) => sum + current.quantity, 0);
-        this.setState({ purchasable: sum > 0 })
-    }
 
-    removeIngredientHandler(ingredientLabel: keyof IngredientType) {
-
-        const index = this.state.ingredients.findIndex(ingr => ingr.name === ingredientLabel)
-        let ingred = [...this.state.ingredients];
-
-        if (ingred[index].quantity > 0) {
-            ingred[index].quantity = ingred[index].quantity - 1;
-            let totalPrice = this.state.totalPrice - INGREDIENT_PRICES[ingredientLabel]
-            this.setState({ ingredients: ingred, totalPrice: totalPrice })
-        }
-        this.updatePurchaseState(ingred)
-    }
-
-    addIngredientHandler = (ingredientLabel: keyof IngredientType) => {
-        const index = this.state.ingredients.findIndex(ingr => ingr.name === ingredientLabel)
-        let ingred = [...this.state.ingredients];
-        ingred[index].quantity = ingred[index].quantity + 1;
-        let totalPrice = this.state.totalPrice + INGREDIENT_PRICES[ingredientLabel]
-        this.setState({ ingredients: ingred, totalPrice: totalPrice })
-        this.updatePurchaseState(ingred)
+    updatePurchaseState() {
+        let sum = this.props.ingreds.reduce((sum, current) => sum + current.quantity, 0);
+        return sum > 0
     }
 
 }
-export default withErrorHandler(BurgerBuilder)
+
+
+const mapStateToProps = (state: AppState) => {
+    return {
+        ingreds: state.burger.ingredients,
+        error: state.burger.error,
+        totPrice: state.burger.totalPrice
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<any>): DispatchProps => {
+    return {
+        // dispatch actions to the store (reducer) )=> action={type: type of action, ingredientName: data}
+        onIngredientAdded: (ingName: string) => dispatch(actions.addIngredient(ingName)),
+        onIngredientRemoved: (ingName: string) => dispatch(actions.removeIngredient(ingName)),
+        onInitIngredients: () => dispatch(actions.initIngredient()),
+        onInitPurchase: () => dispatch(actions.purchaseInit())
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder))

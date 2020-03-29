@@ -8,7 +8,6 @@ export class OrderService{
         const getOrderPromise = new Promise<Order[] >((resolve, reject) => {
             let orders : Order[] =[]
             Axios.get('/orders.json').then((rs) => {
-
                 for (const id in rs.data){
                     let customer = new Customer(
                         rs.data[id]._customer._name, 

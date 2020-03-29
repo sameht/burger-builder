@@ -1,17 +1,16 @@
 import React, { Component } from "react";
 import './BuildControls.css';
 import { BuildControl } from "./BuildControl/BuildControl";
-import { IngredientType } from "../../../container/BurgerBuilder/BurgerBuilder";
 
 interface Props {
-    ingredientAdded: (ingredientLabel: keyof IngredientType) => void
-    ingredientRemoved: (ingredientLabel: keyof IngredientType) => void
+    ingredientAdded: (ingredientLabel: string) => void
+    ingredientRemoved: (ingredientLabel: string) => void
     totalePrice: number
     purchasable: boolean
     ordred: ()=>void
 }
 export class BuildControls extends Component<Props>{
-    private controls: { label: keyof IngredientType, type: string }[]
+    private controls: { label: string, type: string }[]
     constructor(props: any) {
         super(props);
         this.controls = [

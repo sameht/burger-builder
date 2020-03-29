@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import { Layout } from './view/container/Layout/Layout';
 import BurgerBuilder from './view/container/BurgerBuilder/BurgerBuilder';
-import { Checkout } from './view/container/Checkout/Checkout';
+import Checkout  from './view/container/Checkout/Checkout';
 import { Route } from 'react-router-dom'
 import Orders  from './view/container/Orders/Orders';
 

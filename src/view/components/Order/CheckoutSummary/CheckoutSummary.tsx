@@ -10,7 +10,7 @@ interface Props {
 }
 
 export class CheckoutSummary extends Component<Props>{
-
+    
     render() {
         return (
             <div className="CheckoutSummary">
